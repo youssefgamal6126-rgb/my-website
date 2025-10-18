@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جدول مذاكرة الدود 😉</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: 
+                /* طبقة بيضاء شفافة بنسبة 20% فقط (لجعل الخلفية تظهر 80%) */
+                linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)),
+                /* خلفية ميكي */
+                url('https://images.unsplash.com/photo-1578632749014-ca77efd052eb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            z-index: 0;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .week-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .day-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 20px 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 200px;
+            border: 2px solid transparent;
+        }
+
+        .day-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+            border-color: #6a11cb;
+        }
+
+        .day-header {
+            font-weight: bold;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #2575fc;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 8px;
+        }
+
+        .day-content {
+            flex-grow: 1;
+            background: rgba(240, 240, 240, 0.7);
+            border-radius: 8px;
+            padding: 10px;
+            min-height: 120px;
+            font-size: 0.95rem;
+            color: #666;
+            overflow-y: auto;
+        }
+
+        .day-content:empty::before {
+            content: "اكتب مهام المذاكرة هنا...";
+            color: #aaa;
+            font-style: italic;
+        }
+
+        .day-content:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: inset 0 0 0 2px #6a11cb;
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            padding: 15px;
+            color: #666;
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            width: 100%;
+        }
+
+        /* إضافة زر لتحميل صورة محلية */
+        .upload-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #6a11cb;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
+            z-index: 1000;
+        }
+
+        .upload-btn:hover {
+            background: #2575fc;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        /* شريط التحكم في شفافية الخلفية */
+        .opacity-control {
+            position: fixed;
+            bottom: 70px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .opacity-control label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .opacity-control input {
+            width: 120px;
+        }
+
+        @media (max-width: 1024px) {
+            .week-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .week-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .week-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- تحكم في شفافية الخلفية -->
+    <div class="opacity-control">
+        <label for="opacity-range">شفافية الخلفية: <span id="opacity-value">80%</span></label>
+        <input type="range" id="opacity-range" min="0" max="100" value="80">
+    </div>
+
+    <!-- زر لتحميل صورة من الجهاز -->
+    <button class="upload-btn" onclick="document.getElementById('file-input').click()">
+        📁 تغيير الخلفية
+    </button>
+    <input type="file" id="file-input" accept="image/*">
+    
+    <div class="container">
+        <header>
+            <h1>جدول مذاكرة الدود 😉</h1>
+            <p class="subtitle">نظم وقتك واجتهد لتحقيق أهدافك</p>
+        </header>
+        
+        <main>
+            <div class="week-grid">
+                <div class="day-card">
+                    <div class="day-header">السبت</div>
+                    <div class="day-content" contenteditable="true"></div>
+                </div>
+                <div class="day-card">
+                    <div class="day-header">الأحد</div>
+                    <div class="day-content" contenteditable="true"></div>
+                </div>
+                <div class="day-card">
+                    <div class="day-header">الاثنين</div>
+                    <div class="day-content" contenteditable="true"></div>
+                </div>
+                <div class="day-card">
+                    <div class="day-header">الثلاثاء</div>
+                    <div class="day-content" contenteditable="true"></div>
+                </div>
+                <div class="day-card">
+                    <div class="day-header">الأربعاء</div>
+                    <div class="day-content" contenteditable="true"></div>
+                </div>
+                <div class="day-card">
+                    <div class="day-header">الخميس</div>
+                    <div class="day-content" contenteditable="true"></div>
+                </div>
+                <div class="day-card">
+                    <div class="day-header">الجمعة</div>
+                    <div class="day-content" contenteditable="true"></div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>© 2023 جدول مذاكرة الدود - كل الحقوق محفوظة</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dayContents = document.querySelectorAll('.day-content');
+            
+            // تحميل المحتوى المحفوظ
+            dayContents.forEach((content, index) => {
+                const savedContent = localStorage.getItem(`dayContent-${index}`);
+                if (savedContent) {
+                    content.innerHTML = savedContent;
+                }
+            });
+            
+            // حفظ المحتوى عند التعديل
+            dayContents.forEach((content, index) => {
+                content.addEventListener('input', function() {
+                    localStorage.setItem(`dayContent-${index}`, this.innerHTML);
+                });
+            });
+            
+            // تأثيرات التركيز
+            dayContents.forEach(content => {
+                content.addEventListener('focus', function() {
+                    this.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+                });
+                
+                content.addEventListener('blur', function() {
+                    this.style.backgroundColor = 'rgba(240, 240, 240, 0.7)';
+                });
+            });
+
+            // تحميل صورة الخلفية من الجهاز
+            document.getElementById('file-input').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        updateBackgroundOpacity(80, e.target.result);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // التحكم في شفافية الخلفية
+            const opacityRange = document.getElementById('opacity-range');
+            const opacityValue = document.getElementById('opacity-value');
+            
+            opacityRange.addEventListener('input', function() {
+                const opacity = this.value;
+                opacityValue.textContent = `${opacity}%`;
+                updateBackgroundOpacity(opacity);
+            });
+
+            function updateBackgroundOpacity(opacity, imageUrl = null) {
+                const currentBg = imageUrl || 
+                    'https://images.unsplash.com/photo-1578632749014-ca77efd052eb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80';
+                
+                // حساب شفافية الطبقة البيضاء (كلما زادت شفافية الخلفية، قلت شفافية الطبقة البيضاء)
+                const whiteLayerOpacity = (100 - opacity) / 100;
+                
+                document.body.style.backgroundImage = 
+                    `linear-gradient(rgba(255, 255, 255, ${whiteLayerOpacity}), rgba(255, 255, 255, ${whiteLayerOpacity})), url('${currentBg}')`;
+            }
+
+            // ضبط الشفافية الافتراضية إلى 80%
+            updateBackgroundOpacity(80);
+        });
+    </script>
+</body>
+</html>
